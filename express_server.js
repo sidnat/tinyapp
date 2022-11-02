@@ -20,7 +20,7 @@ const generateRandomString = () => {
   }
 
   return result;
-}
+};
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -49,8 +49,16 @@ app.get("/urls/:id", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body);
-  res.send("Ok");
+  const newId = generateRandomString();
+  urlDatabase[newId] = req.body.longURL;
+  console.log(urlDatabase);
+  res.redirect(`/urls/${newId}`);
+});
+
+app.get("/u/:id", (req, res) => {
+  if (urlDatabase[req.params.id]) {
+    res.redirect(urlDatabase[req.params.id]);
+  }
 });
 
 app.listen(PORT, () => {
