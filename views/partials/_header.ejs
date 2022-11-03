@@ -18,11 +18,12 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
     </div>
-    <div>
+    <div style="display:inline">
       <% if (!username) { %>
         <form method="POST" action="/login">
           <input type="text" name="username" placeholder="Username"> </input>
           <button type="submit" class="btn btn-outline-dark">Login</button>
+          <a href="/register" class="btn btn-outline-dark">Register</a>
         </form>
       <% } else { %>
         <form method="POST" action="/logout">

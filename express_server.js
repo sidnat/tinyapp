@@ -1,5 +1,5 @@
 const express = require("express");
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = 8080;
 
@@ -36,9 +36,7 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  // const username = req.cookies['username'] || "";
-
-  const templateVars = { 
+  const templateVars = {
     username: req.cookies['username'],
     urls: urlDatabase
   };
@@ -53,7 +51,7 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
-  const templateVars = { 
+  const templateVars = {
     username: req.cookies["username"],
     id: req.params.id,
     longURL: urlDatabase[req.params.id]
@@ -93,6 +91,17 @@ app.post("/logout", (req, res) => {
   res.clearCookie("username");
   res.redirect("/urls");
 });
+
+app.get("/register", (req, res) => {
+  const templateVars = {
+    username: req.cookies['username']
+  };
+  res.render("urls_register", templateVars);
+});
+
+// app.post("/register", (req, res) => {
+
+// });
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
