@@ -1,4 +1,5 @@
 const express = require("express");
+
 const app = express();
 const PORT = 8080;
 
@@ -66,6 +67,10 @@ app.post("/urls/:id/delete", (req, res) => {
   res.redirect("/urls");
 });
 
+app.post("/urls/:id", (req, res) => {
+  urlDatabase[req.params.id] = req.body.key;
+  res.redirect("/urls");
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
