@@ -1,11 +1,13 @@
 const express = require("express");
 const cookieParser = require('cookie-parser');
+const bcrypt = require("bcryptjs");
 const app = express();
 const PORT = 8080;
 
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true}));
 app.use(cookieParser());
+
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -147,7 +149,7 @@ app.post("/login", (req, res) => {
   const authorizedUser = getUserByEmail(users, email);
   if (!authorizedUser) {
     return res.status(403).send('User with that e-mail cannot be found,');
-  } else if (authorizedUser.password !== password) {
+  } else if (!bcrypt.compareSync(password, authorizedUser.password)) {
     return res.status(403).send('Password does not match');
   } else {
     res.cookie("user_id", authorizedUser.id).redirect("/urls");
@@ -180,7 +182,7 @@ app.post("/register", (req, res) => {
   users[newUserId] = {
     id:  newUserId,
     email,
-    password
+    password: bcrypt.hashSync(password, 10)
   };
   res.cookie('user_id', newUserId);
   res.redirect("/urls");
