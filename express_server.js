@@ -39,7 +39,7 @@ const generateRandomString = () => {
 const getUserByEmail = (users, email) => {
   for (let key in users) {
     if (users[key].email === email) {
-      return true;
+      return users[key];
     }
   }
   return false;
@@ -115,40 +115,38 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  const userId = req.cookies["user_id"];
-  const user = users[userId];
-  const templateVars = {
-    user,
-    userId
-  };
-  res.render("urls_login", templateVars);
+  res.render("urls_login");
 });
 
 app.post("/login", (req, res) => {
-  // const email = req.body.email;
-  // const password = req.body.password;
-  req.cookie('user_id');
-  res.redirect("/urls");
+  const email = req.body.email;
+  const password = req.body.password;
+  const authorizedUser = getUserByEmail(users, email)
+  if (!authorizedUser) {
+    return res.status(403).send('User with that e-mail cannot be found,');
+  } else if (authorizedUser.password !== password) {
+    return res.status(403).send('Password does not match');
+  } else {
+    res.cookie("user_id", authorizedUser.id).redirect("/urls");
+  }
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("username");
-  res.redirect("/register");
+  res.clearCookie("user_id");
+  res.redirect("/login");
 });
 
 app.get("/register", (req, res) => {
-  const user = {};
-  const templateVars = { user };
-  res.render("urls_register", templateVars);
+  res.render("urls_register");
 });
 
 app.post("/register", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   if (!email || !password) {
-    return res.send('status code 400: Email or password field left blank');
+    return res.status(400).send('Email or password field left blank');
   } else if (getUserByEmail(users, email)) {
-    return res.send('status code 400: Email already in use');
+    return res.status(400).send('Email already in use');
   }
   const newUserId = generateRandomString();
   users[newUserId] = {
@@ -158,6 +156,7 @@ app.post("/register", (req, res) => {
   };
   res.cookie('user_id', newUserId);
   res.redirect("/urls");
+  console.log(users)
 });
 
 app.listen(PORT, () => {

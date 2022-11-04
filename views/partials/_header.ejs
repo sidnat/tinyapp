@@ -20,7 +20,7 @@
       </div>
     </div>
     <div style="display:inline">
-      <% if (!user.id) { %>
+      <% if (typeof user != 'object') { %>
         <a href="/login" class="btn btn-outline-dark">Login</a>
         <a href="/register" class="btn btn-outline-dark">Register</a>
       <% } else { %>

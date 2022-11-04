@@ -13,25 +13,28 @@
 
   <body>
     <%- include('partials/_header') %>
-    <div class="card text-center">
-      <div class="card-header"></div>
-      <div class="card-body">
-        <h5 class="card-title">Registration</h5>
-      </div>
-      <div class="card-footer text-muted">
-        <p class="card-text">
+      <div>
+        <h2 class="ml-2"><b>Create Account</b></h2>
           <form method="POST" action="/register">
-            <div> 
-              <input name="email" type="email" placeholder="Email"></input>
+            <div>
+              <div>
+                <label class="ml-2" for="email">Email address</label>
+              </div>
+              <div>
+                <input class="ml-2" name="email" type="email" placeholder="Enter email"></input>
+              </div>
             </div>
             <div>
-              <input name="password" type="password" placeholder="Password"></input>
+              <div>
+                <label class="ml-2" for="password">Password</label>
+              </div>
+              <div>
+                <input class="ml-2" name="password" type="password" placeholder="Password"></input>
+              </div>
             </div>
-            <button type="submit" class="btn btn-primary btn-sm">Submit</button>
-          </form>
-        </p>
+          <button type="submit" class="btn btn-primary btn-sm ml-2 mt-2">Register</button>
+        </form>
       </div>
-    </div>
     <!-- Bootstrap JS -->
     <script
       src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
