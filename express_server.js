@@ -114,7 +114,19 @@ app.post("/urls/:id", (req, res) => {
   res.redirect("/urls");
 });
 
+app.get("/login", (req, res) => {
+  const userId = req.cookies["user_id"];
+  const user = users[userId];
+  const templateVars = {
+    user,
+    userId
+  };
+  res.render("urls_login", templateVars);
+});
+
 app.post("/login", (req, res) => {
+  // const email = req.body.email;
+  // const password = req.body.password;
   req.cookie('user_id');
   res.redirect("/urls");
 });

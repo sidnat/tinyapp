@@ -14,17 +14,15 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
+        <!-- consider making links hidden when no user logged in -->
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
     </div>
     <div style="display:inline">
       <% if (!user.id) { %>
-        <form method="POST" action="/login">
-          <input type="text" name="email" placeholder="User Email"> </input>
-          <button type="submit" class="btn btn-outline-dark">Login</button>
-          <a href="/register" class="btn btn-outline-dark">Register</a>
-        </form>
+        <a href="/login" class="btn btn-outline-dark">Login</a>
+        <a href="/register" class="btn btn-outline-dark">Register</a>
       <% } else { %>
         <form method="POST" action="/logout">
           Logged in as: <%= user.email %>
