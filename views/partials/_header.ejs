@@ -19,15 +19,15 @@
       </div>
     </div>
     <div style="display:inline">
-      <% if (!username) { %>
+      <% if (!user.id) { %>
         <form method="POST" action="/login">
-          <input type="text" name="username" placeholder="Username"> </input>
+          <input type="text" name="email" placeholder="User Email"> </input>
           <button type="submit" class="btn btn-outline-dark">Login</button>
           <a href="/register" class="btn btn-outline-dark">Register</a>
         </form>
       <% } else { %>
         <form method="POST" action="/logout">
-          Logged in as: <%= username %>
+          Logged in as: <%= user.email %>
           <button type="submit" class="btn btn-outline-dark">Logout</button>
         </form>
       <% } %>

@@ -12,6 +12,19 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = {
+  userRandomID: {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur",
+  },
+  "abc123": {
+    id: "abc123",
+    email: "abc@gmail.com",
+    password: "password"
+  }
+};
+
 const generateRandomString = () => {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
@@ -36,23 +49,31 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
+  const userId = req.cookies["user_id"];
+  if (!userId) {
+    return res.redirect("/register");
+  }
+  const user = users[userId];
+  console.log('user: ', user);
   const templateVars = {
-    username: req.cookies['username'],
+    user,
     urls: urlDatabase
   };
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
+  const userId = req.cookies["user_id"];
   const templateVars = {
-    username: req.cookies["username"],
+    userId
   };
   res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:id", (req, res) => {
+  const userId = req.cookies["user_id"];
   const templateVars = {
-    username: req.cookies["username"],
+    userId,
     id: req.params.id,
     longURL: urlDatabase[req.params.id]
   };
@@ -78,30 +99,36 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 app.post("/urls/:id", (req, res) => {
-  urlDatabase[req.params.id] = req.body.key;
+  urlDatabase[req.params.id] = req.body.urlId;
   res.redirect("/urls");
 });
 
 app.post("/login", (req, res) => {
-  res.cookie('username', req.body.username);
+  req.cookie('user_id');
   res.redirect("/urls");
 });
 
 app.post("/logout", (req, res) => {
   res.clearCookie("username");
-  res.redirect("/urls");
+  res.redirect("/register");
 });
 
 app.get("/register", (req, res) => {
-  const templateVars = {
-    username: req.cookies['username']
-  };
+  const user = {};
+  const templateVars = { user };
   res.render("urls_register", templateVars);
 });
 
-// app.post("/register", (req, res) => {
-
-// });
+app.post("/register", (req, res) => {
+  const newUserId = generateRandomString();
+  users[newUserId] = {
+    id:  newUserId,
+    email: req.body.email,
+    password: req.body.password
+  };
+  res.cookie('user_id', newUserId);
+  res.redirect("/urls");
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
