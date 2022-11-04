@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 const express = require("express");
 const cookieSession = require('cookie-session');
+const { generateRandomString, getUserByEmail, userExists } = require('./helpers');
 const bcrypt = require("bcryptjs");
 const app = express();
 const PORT = 8080;
@@ -13,7 +14,6 @@ app.use(cookieSession({
 
   maxAge: 24 * 60 * 60 * 1000
 }));
-
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -33,37 +33,13 @@ const users = {
   }
 };
 
-const generateRandomString = () => {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-
-  for (let i = 0; i < 6; i++) {
-    result += characters.charAt(Math.floor(Math.random() * characters.length));
-  }
-
-  return result;
-};
-
-const getUserByEmail = (users, email) => {
-  for (let key in users) {
-    if (users[key].email === email) {
-      return users[key];
-    }
-  }
-  return false;
-};
-
-const userExists = (userId) => {
-  return users[userId];
-};
-
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
 app.get("/urls", (req, res) => {
   const userId = req.session.user_id;
-  const loggedIn = userExists(userId);
+  const loggedIn = userExists(userId, users);
   if (!loggedIn) {
     return res.redirect("/login");
   }
@@ -77,7 +53,7 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   const userId = req.session.user_id;
-  const loggedIn = userExists(userId);
+  const loggedIn = userExists(userId, users);
   if (!loggedIn) {
     return res.redirect("/login");
   }
@@ -91,7 +67,7 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/urls/:id", (req, res) => {
   const userId = req.session.user_id;
-  const loggedIn = userExists(userId);
+  const loggedIn = userExists(userId, users);
   if (!loggedIn) {
     return res.redirect("/login");
   }
@@ -109,7 +85,7 @@ app.get("/urls/:id", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  const loggedIn = userExists(req.session.user_id);
+  const loggedIn = userExists(req.session.user_id, users);
   if (!loggedIn) {
     return res.send("Please register an account to shortify urls.");
   }
@@ -133,7 +109,7 @@ app.post("/urls/:id/delete", (req, res) => {
 
 app.post("/urls/:id", (req, res) => {
   const userId = req.session.user_id;
-  const loggedIn = userExists(userId);
+  const loggedIn = userExists(userId, users);
   if (!loggedIn) {
     return res.redirect("/login");
   }
@@ -142,7 +118,7 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  const loggedIn = userExists(req.session.user_id);
+  const loggedIn = userExists(req.session.user_id, users);
   if (loggedIn) {
     return res.redirect("/urls");
   }
@@ -170,7 +146,7 @@ app.post("/logout", (req, res) => {
 
 app.get("/register", (req, res) => {
   const userId = req.session.user_id;
-  const loggedIn = userExists(userId);
+  const loggedIn = userExists(userId, users);
   if (loggedIn) {
     return res.redirect("/urls");
   }
