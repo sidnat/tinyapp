@@ -36,6 +36,15 @@ const generateRandomString = () => {
   return result;
 };
 
+const getUserByEmail = (users, email) => {
+  for (let key in users) {
+    if (users[key].email === email) {
+      return true;
+    }
+  }
+  return false;
+};
+
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -54,7 +63,6 @@ app.get("/urls", (req, res) => {
     return res.redirect("/register");
   }
   const user = users[userId];
-  console.log('user: ', user);
   const templateVars = {
     user,
     urls: urlDatabase
@@ -64,7 +72,9 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   const userId = req.cookies["user_id"];
+  const user = users[userId];
   const templateVars = {
+    user,
     userId
   };
   res.render("urls_new", templateVars);
@@ -72,7 +82,9 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/urls/:id", (req, res) => {
   const userId = req.cookies["user_id"];
+  const user = users[userId];
   const templateVars = {
+    user,
     userId,
     id: req.params.id,
     longURL: urlDatabase[req.params.id]
@@ -83,7 +95,6 @@ app.get("/urls/:id", (req, res) => {
 app.post("/urls", (req, res) => {
   const newId = generateRandomString();
   urlDatabase[newId] = req.body.longURL;
-  console.log(urlDatabase);
   res.redirect(`/urls/${newId}`);
 });
 
@@ -120,11 +131,18 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  if (!email || !password) {
+    return res.send('status code 400: Email or password field left blank');
+  } else if (getUserByEmail(users, email)) {
+    return res.send('status code 400: Email already in use');
+  }
   const newUserId = generateRandomString();
   users[newUserId] = {
     id:  newUserId,
-    email: req.body.email,
-    password: req.body.password
+    email,
+    password
   };
   res.cookie('user_id', newUserId);
   res.redirect("/urls");
