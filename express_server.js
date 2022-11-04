@@ -1,12 +1,18 @@
+/* eslint-disable camelcase */
 const express = require("express");
-const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 const bcrypt = require("bcryptjs");
 const app = express();
 const PORT = 8080;
 
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true}));
-app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: ['fdj3i42o2k3ggdger644212'],
+
+  maxAge: 24 * 60 * 60 * 1000
+}));
 
 
 const urlDatabase = {
@@ -56,7 +62,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const userId = req.cookies['user_id'];
+  const userId = req.session.user_id;
   const loggedIn = userExists(userId);
   if (!loggedIn) {
     return res.redirect("/login");
@@ -70,7 +76,7 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  const userId = req.cookies['user_id'];
+  const userId = req.session.user_id;
   const loggedIn = userExists(userId);
   if (!loggedIn) {
     return res.redirect("/login");
@@ -84,7 +90,7 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
-  const userId = req.cookies['user_id'];
+  const userId = req.session.user_id;
   const loggedIn = userExists(userId);
   if (!loggedIn) {
     return res.redirect("/login");
@@ -103,7 +109,7 @@ app.get("/urls/:id", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  const loggedIn = userExists(req.cookies['user_id']);
+  const loggedIn = userExists(req.session.user_id);
   if (!loggedIn) {
     return res.send("Please register an account to shortify urls.");
   }
@@ -126,7 +132,7 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 app.post("/urls/:id", (req, res) => {
-  const userId = req.cookies['user_id'];
+  const userId = req.session.user_id;
   const loggedIn = userExists(userId);
   if (!loggedIn) {
     return res.redirect("/login");
@@ -136,7 +142,7 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  const loggedIn = userExists(req.cookies['user_id']);
+  const loggedIn = userExists(req.session.user_id);
   if (loggedIn) {
     return res.redirect("/urls");
   }
@@ -152,17 +158,18 @@ app.post("/login", (req, res) => {
   } else if (!bcrypt.compareSync(password, authorizedUser.password)) {
     return res.status(403).send('Password does not match');
   } else {
-    res.cookie("user_id", authorizedUser.id).redirect("/urls");
+    req.session.user_id = authorizedUser.id;
+    res.redirect("/urls");
   }
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("user_id");
+  req.session.user_id = undefined;
   res.redirect("/login");
 });
 
 app.get("/register", (req, res) => {
-  const userId = req.cookies['user_id'];
+  const userId = req.session.user_id;
   const loggedIn = userExists(userId);
   if (loggedIn) {
     return res.redirect("/urls");
@@ -179,12 +186,13 @@ app.post("/register", (req, res) => {
     return res.status(400).send('Email already in use');
   }
   const newUserId = generateRandomString();
+  console.log(newUserId);
   users[newUserId] = {
     id:  newUserId,
     email,
     password: bcrypt.hashSync(password, 10)
   };
-  res.cookie('user_id', newUserId);
+  req.session.user_id = newUserId;
   res.redirect("/urls");
 });
 
