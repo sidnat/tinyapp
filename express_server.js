@@ -82,10 +82,7 @@ app.get("/urls/new", (req, res) => {
     return res.redirect("/login");
   }
   const user = users[userID];
-  const templateVars = {
-    user,
-    userID
-  };
+  const templateVars = { user };
   res.render("urls_new", templateVars);
 });
 
@@ -104,7 +101,6 @@ app.get("/urls/:id", (req, res) => {
   const user = users[userID];
   const templateVars = {
     user,
-    userID,
     id: req.params.id,
     longURL: urlDatabase[req.params.id].longURL
   };
@@ -114,7 +110,7 @@ app.get("/urls/:id", (req, res) => {
 app.post("/urls/:id", (req, res) => {
   const userID = req.session.user_id;
   const loggedIn = userExists(userID, users);
-  if (!urlDatabase[req.params.id]) {
+  if (!urlDatabase[req.params.id] || !urlDatabase[req.params.id].longURL) {
     return res.send("<p>Short URL id does not exist.</p>");
   } else if (!loggedIn) {
     return res.send("<p>Please login to edit URL.</p>");
@@ -130,8 +126,7 @@ app.post("/urls/:id", (req, res) => {
 });
 
 app.get("/u/:id", (req, res) => {
-  console.log(urlDatabase[req.params.id])
-  if (urlDatabase[req.params.id]) {
+  if (urlDatabase[req.params.id].longURL) {
     res.redirect(urlDatabase[req.params.id].longURL);
   } else {
     res.send("<p>short url id does not exist</p>");
