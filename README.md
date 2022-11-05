@@ -24,8 +24,9 @@ TinyApp is a full stack web application built with Node and Express that allows 
 !["Screenshot of Registration page"](https://github.com/sidnat/tinyapp/blob/master/docs/register.png?raw=true)
 - Login with registered account.
 !["screenshot of Login page"](https://github.com/sidnat/tinyapp/blob/master/docs/login.png?raw=true)
-- Create new URL (http://...) will give you a Short URL ID.
+- Create new URL (http://...) will give you a Short URL ID corresponding to your long URL ID which can be edited.
 !["Screenshot of Create TinyURL page"](https://github.com/sidnat/tinyapp/blob/master/docs/create-short-url-id.png?raw=true)
-- After you've created a new Short URL ID, you can visit the stored long URl by visiting "localhost:8080/u/" followed by the Short URL ID.
+!["screenshot of Short URL ID"](https://github.com/sidnat/tinyapp/blob/master/docs/short-url-id.png?raw=true)
+- After you've created a new Short URL ID, you can visit the stored long URL by visiting "localhost:8080/u/" followed by the Short URL ID.
 - click the "My URLS" link to view all saved Short URL ID's. Edit or Delete a Short URL ID by clicking the "Edit" or "Delete" button.
 !["Screenshot of URLs page"](https://github.com/sidnat/tinyapp/blob/master/docs/urls-page.png?raw=true)
