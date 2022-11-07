@@ -1,3 +1,4 @@
+// return alphanumeric string, 6 characters long
 const generateRandomString = () => {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let result = "";
@@ -9,19 +10,21 @@ const generateRandomString = () => {
   return result;
 };
 
+// returns user object by searching email
 const getUserByEmail = (users, email) => {
   for (let key in users) {
     if (users[key].email === email) {
       return users[key];
     }
   }
-  return undefined;
 };
 
-const userExists = (userId, users) => {
+// returns user object by searching id
+const getUserByUserId = (userId, users) => {
   return users[userId];
 };
 
+// returns all short url id's owned by user
 const urlsForUser = (id, urlDatabase) => {
   const usersURLs = {};
 
@@ -36,6 +39,6 @@ const urlsForUser = (id, urlDatabase) => {
 module.exports = {
   generateRandomString,
   getUserByEmail,
-  userExists,
+  getUserByUserId,
   urlsForUser
 };
